@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Donation</title>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"%3E%3Cpath fill="%23f3f4f6" fill-opacity="0.8" d="M0,64L48,80C96,96,192,128,288,128C384,128,480,96,576,85.3C672,75,768,85,864,106.7C960,128,1056,160,1152,165.3C1248,171,1344,149,1392,138.7L1440,128V320H1392C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320H0Z"%3E%3C/path%3E%3C/svg%3E');
+            background-size: cover;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+        }
+        .role-card {
+            background: #198754;
+            color: #fff;
+            border: 2px solid #198754;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .role-card img {
+            width: 40px;
+            margin-bottom: 10px;
+        }
+        .form-columns {
+            display: flex;
+            gap: 20px;
+        }
+        .form-column {
+            flex: 1;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #198754;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #d1e7dd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        input[type="number"] {
+            width: 100px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #198754;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #157347;
+        }
+        video, canvas {
+            width: 100%;
+            max-width: 400px;
+            margin: 10px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="role-card">
+            <img src="" alt="Donor">
+            <h3>Donor</h3>
+            <p>Individual or business with surplus food</p>
+        </div>
+        <form method="POST" enctype="multipart/form-data" id="donationForm">
+            <div class="form-columns">
+                <div class="form-column">
+                    <label for="quantity">Quantity (kg) *</label>
+                    <input type="number" step="0.1" name="quantity" placeholder="e.g., 5.5" required><br>
+                    <label for="quality_rating">Quality Rating (1-5) *</label>
+                    <input type="number" name="quality_rating" min="1" max="5" placeholder="e.g., 3" required><br>
+                </div>
+                <div class="form-column">
+                    <label for="description">Description *</label>
+                    <textarea name="description" rows="4" cols="50" placeholder="Describe the food item" required></textarea><br>
+                </div>
+            </div>
+            <label for="image">Upload Food Image *</label><br>
+            <input type="file" name="image" id="imageInput" accept="image/*" required><br>
+            <button type="button" id="startCamera">Capture Photo</button>
+            <video id="video" autoplay></video>
+            <canvas id="canvas" style="display: none;"></canvas>
+            <button type="button" id="capture" style="display: none;">Take Photo</button>
+            <button type="submit">Submit Donation</button>
+        </form>
+        <a href="{{ url_for('home') }}">Back to Home</a>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture');
+        const startCameraButton = document.getElementById('startCamera');
+        const imageInput = document.getElementById('imageInput');
+        const form = document.getElementById('donationForm');
+
+        startCameraButton.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                video.srcObject = stream;
+                video.style.display = 'block';
+                captureButton.style.display = 'block';
+                startCameraButton.style.display = 'none';
+            } catch (err) {
+                alert('Error accessing camera: ' + err.message);
+            }
+        });
+
+        captureButton.addEventListener('click', () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            canvas.toBlob((blob) => {
+                const file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                imageInput.files = dataTransfer.files;
+                video.srcObject.getTracks().forEach(track => track.stop());
+                video.style.display = 'none';
+                captureButton.style.display = 'none';
+                startCameraButton.style.display = 'block';
+                canvas.style.display = 'none';
+            }, 'image/jpeg');
+        });
+
+        form.addEventListener('submit', () => {
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!-- templates/login.html (Login Page) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Zero Hunger</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">❤️ Zero Hunger</div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#">Donations</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+                {% if session.get('user_id') %}
+                    <li><a href="/logout" class="btn">Log Out</a></li>
+                {% else %}
+                    <li><a href="/login" class="btn">Log In</a></li>
+                    <li><a href="/signup" class="btn">Get Started</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <section class="login">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <div class="login-container">
+            <h1>Sign In</h1>
+            <form method="POST">
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <input type="email" name="email" placeholder="your.email@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password *</label>
+                    <input type="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn">Sign In</button>
+            </form>
+            <p>Don't have an account? <a href="/signup">Sign up here</a></p>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

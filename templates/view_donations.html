@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Donations - Zero Hunger</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">❤️ Zero Hunger</div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/donate">Donate</a></li>
+                <li><a href="/view_donations">View Donations</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+                {% if session.get('user_id') %}
+                    <li><a href="/logout" class="btn">Log Out</a></li>
+                {% else %}
+                    <li><a href="/login" class="btn">Log In</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <section class="signup">  <!-- Reused for consistency -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <h1>Available Donations</h1>
+        {% if donations %}
+            <ul style="list-style: none; padding: 0;">
+            {% for donation in donations %}
+                <li style="background: #e8f5e9; padding: 15px; margin: 10px 0; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    ID: {{ donation.id }} | Donor: {{ donation.users.name if donation.users else 'Anonymous' }} | Quantity: {{ donation.quantity }} kg | 
+                    Rating: {{ donation.quality_rating }}/5 | Description: {{ donation.description or 'No description' }} | Uploaded: {{ donation.created_at }}
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No donations available yet. Check back soon!</p>
+        {% endif %}
+        <p><a href="{{ url_for('home') }}">Back to Home</a></p>
+    </section>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

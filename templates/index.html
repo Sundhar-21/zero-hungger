@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero Hunger</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">❤️ Zero Hunger</div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/donate">Donate</a></li>
+                <li><a href="/view_donations">View Donations</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+                {% if session.get('user_id') %}
+                    <li><a href="/complete_profile" class="btn secondary">Update Profile</a></li>  <!-- Added for easy access -->
+                    <li><a href="/logout" class="btn">Log Out</a></li>
+                {% else %}
+                    <li><a href="/login" class="btn">Log In</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <section class="hero">
+        <div class="hero-text">
+            <span class="initiative">❤️ Zero Hunger Initiative</span>
+            <h1>End Hunger, Reduce Waste</h1>
+            <p>Connect with your community to share surplus food, support those in need, and create a sustainable future where no meal goes to waste.</p>
+            <a href="/signup" class="btn">Get Started Today →</a>
+            <a href="#" class="btn secondary">View Donations</a>
+        </div>
+        <div class="hero-image">
+            <img src="{{ url_for('static', filename='images/top-view-vegetables-arrangement-with-plate.jpg') }}" alt="Top view of a colorful vegetable arrangement with a plate, symbolizing zero hunger" onerror="this.src='https://via.placeholder.com/600x400?text=Image+Not+Loaded';">
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="stat">
+            <span>👥</span>
+            <h2>5,000+</h2>
+            <p>Active Users</p>
+        </div>
+        <div class="stat">
+            <span>🍴</span>
+            <h2>150,000+</h2>
+            <p>Meals Saved</p>
+        </div>
+        <div class="stat">
+            <span>🌍</span>
+            <h2>50+</h2>
+            <p>Cities Covered</p>
+        </div>
+        <div class="stat">
+            <span>📈</span>
+            <h2>80%</h2>
+            <p>Food Waste Reduced</p>
+        </div>
+    </section>
+
+    <section class="help">
+        <h1>How You Can Help</h1>
+        <p>Whether you're an individual, organization, or NGO, there's a place for you in our mission to end hunger.</p>
+        <div class="cards">
+            <div class="card">
+                <h3>For Donors</h3>
+                <p>Share surplus food easily and make a difference in your community.</p>
+                <a href="/signup" class="btn">Start Donating →</a>
+            </div>
+            <div class="card">
+                <h3>For NGOs</h3>
+                <p>Coordinate food distribution and maximize your impact efficiently.</p>
+                <a href="/signup" class="btn">Join as NGO →</a>
+            </div>
+            <div class="card">
+                <h3>For Recipients</h3>
+                <p>Find nutritious meals and support in your local area.</p>
+                <a href="/signup" class="btn">Find Food →</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="call-to-action">
+        <h1>Ready to Make a Difference?</h1>
+        <p>Join thousands of people already working together to create a world without hunger.</p>
+        <a href="/signup" class="btn cta-btn">Join the Movement ❤️</a>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <div class="logo">❤️ Zero Hunger</div>
+                <p>Connecting communities to eliminate food waste and hunger, one meal at a time.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">View Donations</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Join Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Get Involved</h3>
+                <ul>
+                    <li><a href="/signup">Become a Donor</a></li>
+                    <li><a href="/signup">NGO Partnership</a></li>
+                    <li><a href="/signup">Find Food</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <ul>
+                    <li><a href="mailto:contact@zerohunger.org">contact@zerohunger.org</a></li>
+                    <li><a href="tel:+15551234567">+1 (555) 123-4567</a></li>
+                    <li>Global Initiative</li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
