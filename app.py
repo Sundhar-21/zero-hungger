@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from supabase import create_client, Client
 import os
 import requests
+from datetime import datetime  # Added for parsing created_at
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'a_real_secret_key_like_this_one_123')  # Ensure a strong key
@@ -299,9 +300,18 @@ def view_donations():
             '*, users!donations_user_id_fkey(name)'
         ).execute()
         donations = response.data
+        # Parse created_at strings to datetime objects
+        for donation in donations:
+            if donation.get('created_at'):
+                try:
+                    donation['created_at'] = datetime.fromisoformat(donation['created_at'].replace('Z', '+00:00'))
+                except (ValueError, TypeError) as e:
+                    print(f"DEBUG: Failed to parse created_at for donation {donation.get('id')}: {e}")
+                    donation['created_at'] = None  # Fallback to None if parsing fails
         return render_template('view_donations.html', donations=donations, user=profile)
     except Exception as e:
         flash(f'Error fetching donations: {str(e)}', 'error')
+        print(f"View donations exception: {e}")
         return redirect(url_for('home'))
 
 
