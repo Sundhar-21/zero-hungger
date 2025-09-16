@@ -5,6 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Donations - Zero Hunger</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .donation-item {
+            display: flex;
+            align-items: flex-start;
+            background: #e8f5e9;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .donation-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+        .donation-details {
+            flex: 1;
+        }
+        .donation-details h3 {
+            margin: 0 0 10px 0;
+            color: #2e7d32;
+        }
+        .donation-details p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .no-image {
+            width: 150px;
+            height: 150px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-style: italic;
+        }
+        .donations-list {
+            list-style: none;
+            padding: 0;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -37,11 +82,23 @@
         {% endwith %}
         <h1>Available Donations</h1>
         {% if donations %}
-            <ul style="list-style: none; padding: 0;">
+            <ul class="donations-list">
             {% for donation in donations %}
-                <li style="background: #e8f5e9; padding: 15px; margin: 10px 0; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    ID: {{ donation.id }} | Donor: {{ donation.users.name if donation.users else 'Anonymous' }} | Quantity: {{ donation.quantity }} kg | 
-                    Rating: {{ donation.quality_rating }}/5 | Description: {{ donation.description or 'No description' }} | Uploaded: {{ donation.created_at }}
+                <li class="donation-item">
+                    {% if donation.image_url %}
+                        <img src="{{ donation.image_url }}" alt="Donation Image" class="donation-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="no-image" style="display: none;">No Image Available</div>
+                    {% else %}
+                        <div class="no-image">No Image Available</div>
+                    {% endif %}
+                    <div class="donation-details">
+                        <h3>Donation ID: {{ donation.id }}</h3>
+                        <p><strong>Donor:</strong> {{ donation.users.name if donation.users else 'Anonymous' }}</p>
+                        <p><strong>Quantity:</strong> {{ donation.quantity }} kg</p>
+                        <p><strong>Quality Rating:</strong> {{ donation.quality_rating }}/5</p>
+                        <p><strong>Description:</strong> {{ donation.description or 'No description provided' }}</p>
+                        <p><strong>Uploaded:</strong> {% if donation.created_at %}{{ donation.created_at.strftime('%Y-%m-%d %H:%M:%S') }}{% else %}Unknown{% endif %}</p>
+                    </div>
                 </li>
             {% endfor %}
             </ul>
@@ -52,5 +109,19 @@
     </section>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        // Handle image load errors
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('.donation-image');
+            images.forEach(img => {
+                img.addEventListener('error', function() {
+                    this.style.display = 'none';
+                    if (this.nextElementSibling && this.nextElementSibling.classList.contains('no-image')) {
+                        this.nextElementSibling.style.display = 'flex';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
